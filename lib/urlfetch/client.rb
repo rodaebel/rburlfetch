@@ -8,11 +8,13 @@ module Urlfetch
 
   MAX_CHUNK_SIZE = 1024
 
-  ERROR      = 'ERROR'
+  ERROR = 'ERROR'
 
-  NOT_FOUND  = 'NOT_FOUND'
+  NOT_FOUND = 'NOT_FOUND'
 
-  TERMINATOR = "\tEOF\n$"
+  TERMINATOR = "\tEOF\n"
+
+  TERMINATOR_REGEX = Regexp.new(Urlfetch::TERMINATOR<<'$')
 
   # Instances of this class are raised when a download fails.
   class DownloadError < StandardError
@@ -61,6 +63,7 @@ module Urlfetch
   #
   # Returns:
   # Encoded headers.
+  #
   def self.encode_headers(headers)
     if headers.length == 0 then
       return ""
@@ -157,7 +160,8 @@ module Urlfetch
       while data = (@socket.readpartial(MAX_CHUNK_SIZE) rescue nil)
         (body||="") << data
 
-        if data =~ Regexp.new(Urlfetch::TERMINATOR) then
+        if data =~ TERMINATOR_REGEX then
+          body.chomp(TERMINATOR)
           break
         end
       end
