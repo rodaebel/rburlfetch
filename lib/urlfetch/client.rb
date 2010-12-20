@@ -19,6 +19,13 @@ module Urlfetch
   end
 
   # Returns a data packet.
+  #
+  # Params:
+  # +args+:: Arbitrary arguments to pack as binary data.
+  #
+  # Returns:
+  # Packed binary data.
+  #
   def self.pack(*args)
     data = String.new
     args.each do |a|
@@ -28,6 +35,13 @@ module Urlfetch
   end
 
   # Creates a command from the given arguments.
+  #
+  # Params:
+  # +args+:: Arbitrary arguments to pack as binary data.
+  #
+  # Returns:
+  # Encoded command.
+  #
   def self.command(*args)
     if args.length == 1
       return args[0]
@@ -41,6 +55,12 @@ module Urlfetch
   end
 
   # Encodes headers.
+  #
+  # Params:
+  # +headers+:: Hash with key-value pairs holding the HTTP headers.
+  #
+  # Returns:
+  # Encoded headers.
   def self.encode_headers(headers)
     if headers.length == 0 then
       return ""
@@ -56,18 +76,22 @@ module Urlfetch
   class URLFetchClient
 
     # Constructor.
+    #
     # Params:
-    # +addr+:: An Address instance
+    # +addr+:: An Address instance.
+    #
     def initialize(addr=DEFAULT_ADDR)
       @address = addr
       @socket = nil
     end
 
+    # Private method to open a socket to the URL Fetch service.
     def open
       @socket = TCPSocket.new(@address.host, @address.port)
     end
     private :open
 
+    # Closes the socket to the URL Fetch service.
     def close
       if @socket != nil then
         @socket.close
@@ -75,6 +99,17 @@ module Urlfetch
       end
     end
 
+    # Starts a fetch call.
+    #
+    # Params:
+    # +url+:: The HTTP/S URL.
+    # +payload+:: Body content for a POST or PUT request.
+    # +method+:: The HTTP method.
+    # +headers+:: Hash holding the HTTP headers as key-value pairs.
+    #
+    # Returns:
+    # A fetch call id.
+    #
     def start_fetch(url, payload="", method="get", headers={})
       if @socket == nil then
         open
@@ -96,6 +131,17 @@ module Urlfetch
       return res
     end
 
+    # Gets the results.
+    #
+    # Params:
+    # +fid+:: The fetch call id.
+    # +nowait+:: Boolean which specifies if the client waits for results.
+    #
+    # Returns:
+    # * Status code
+    # * Response headers
+    # * Response body
+    #
     def get_result(fid, nowait=false)
 
       if @socket == nil then
