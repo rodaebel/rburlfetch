@@ -56,6 +56,22 @@ module Urlfetch
     return command
   end
 
+  # Convert first four bytes from a string to an unsigned 32-bit integer.
+  #
+  # Params:
+  # +s+:: A string.
+  #
+  # Returns:
+  # Integer or long.
+  #
+  def self.read_int4(s)
+    int = Integer((s[0].ord << 24) +
+                  (s[1].ord << 16) +
+                  (s[2].ord << 8) +
+                  (s[3].ord << 0))
+    return int
+  end
+
   # Encodes headers.
   #
   # Params:
@@ -73,6 +89,20 @@ module Urlfetch
       h << k+': '+headers[k]
     end
     return h.join("\n")
+  end
+
+  # Decodes headers.
+  #
+  # Params:
+  # +string+:: String containing encoded HTTP headers.
+  #
+  # Returns:
+  # Hash with key-value pairs holding the HTTP headers.
+  #
+  def self.decode_headers(string)
+    headers = Hash.new
+    string.split("\n").map { |h| h.split(": ") }.map { |k,v| headers[k]=v }
+    return headers
   end
 
   # Instances of this class represent single clients for the URL Fetch service.
@@ -157,15 +187,29 @@ module Urlfetch
         @socket.write(Urlfetch.command("GET_RESULT", fid))
       end
 
+      body = ""
+
       while data = (@socket.readpartial(MAX_CHUNK_SIZE) rescue nil)
-        (body||="") << data
+        if body.length == 0 then
+          status_code = Urlfetch.read_int4(data.slice(0, 4))
+          data = data.slice(4, data.length)
+        end
 
         if data =~ TERMINATOR_REGEX then
-          body.chomp(TERMINATOR)
+          body << data.slice(0, data.length-TERMINATOR.length)
           break
         end
+
+        body << data
       end
-      return body
+
+      headers, body = body.split("\n\n", 2)
+
+      res = {"status_code"=>status_code,
+             "body"=>body,
+             "headers"=>Urlfetch.decode_headers(headers)}
+
+      return res
     end
 
   end  # class URLFetchClient

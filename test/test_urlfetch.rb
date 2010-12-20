@@ -16,6 +16,12 @@ class TestUrlfetchClient < Test::Unit::TestCase
     assert_equal("\003foo\004testbar", Urlfetch.command('foo', 'test', 'bar'))
   end
 
+  def test_read_int4
+    require 'urlfetch'
+
+    assert_equal(400, Urlfetch.read_int4("\000\000\001\220"))
+  end
+
   def test_headers
     require 'urlfetch'
 
@@ -24,6 +30,10 @@ class TestUrlfetchClient < Test::Unit::TestCase
     assert_equal(
       "Content-Type: text/plain\nX-Custom-Header: foobar",
       Urlfetch.encode_headers(headers))
+
+    assert_equal(
+      {'Content-Type'=>'text/plain', 'X-Custom-Header'=>'foobar'},
+      Urlfetch.decode_headers(Urlfetch.encode_headers(headers)))
   end
 
   def test_client
@@ -42,6 +52,8 @@ class TestUrlfetchClient < Test::Unit::TestCase
 
     # Get the result
     result = client.get_result(fid)
+
+    assert_equal(200, result["status_code"])
   end
 
 end
