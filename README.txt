@@ -3,7 +3,10 @@
 A Ruby application can make an asynchronous request to the URL Fetch service
 to fetch a URL in the background, while the application code does other things.
 
-== Copyright and License:
+The URL Fetch service is entirely written in Erlang. See
+http://urlfetch.googlecode.com for further information.
+
+== Copyright and License
 
 Copyright 2010 Tobias Rodaebel
 
