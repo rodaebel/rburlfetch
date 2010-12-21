@@ -190,9 +190,13 @@ module Urlfetch
       body = ""
 
       while data = (@socket.readpartial(MAX_CHUNK_SIZE) rescue nil)
-        if body.length == 0 then
+        if body.length == 0 and data then
           status_code = Urlfetch.read_int4(data.slice(0, 4))
           data = data.slice(4, data.length)
+        end
+
+        if not data or data == NOT_FOUND
+          raise DownloadError
         end
 
         if data =~ TERMINATOR_REGEX then

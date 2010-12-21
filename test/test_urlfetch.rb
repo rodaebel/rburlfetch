@@ -36,7 +36,7 @@ class TestUrlfetchClient < Test::Unit::TestCase
       Urlfetch.decode_headers(Urlfetch.encode_headers(headers)))
   end
 
-  def test_client
+  def test_fetch_call
     require 'urlfetch'
 
     # Create an address
@@ -55,6 +55,34 @@ class TestUrlfetchClient < Test::Unit::TestCase
 
     # Close the client
     client.close
+
+    assert_equal(200, result["status_code"])
+  end
+
+  def test_fetch_call_nowait
+    require 'urlfetch'
+
+    # Create an address
+    addr = Urlfetch::Address.new(host='127.0.0.1', port=10190)
+
+    # Instatiate a client
+    client = Urlfetch::URLFetchClient.new(addr)
+
+    # Start a single fetch call
+    fid = client.start_fetch("http://www.ruby-lang.org")
+
+    assert_equal(32, fid.length)
+
+    begin
+      # Get the result
+      result = client.get_result(fid, nowait=true)
+    rescue Urlfetch::DownloadError
+      # Retry, but now wait for the result
+      result = client.get_result(fid)
+    ensure
+      # Close the client
+      client.close
+    end
 
     assert_equal(200, result["status_code"])
   end
