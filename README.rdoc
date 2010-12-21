@@ -21,3 +21,36 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+== Requirements
+
+The urlfetch library requires the Ruby programming language version 1.8.7 or
+higher installed in your system.
+
+== Usage
+
+In order to make asynchronous URL fetch calls, the urlfetch library provides a
+low-level API.
+
+  require 'urlfetch'
+
+  # Specify the address of the the URL Fetch service
+  addr = Urlfetch::Address.new(host='127.0.0.1', port=10190)
+
+  # Create a new client
+  client = Urlfetch::URLFetchClient.new(addr)
+
+  # Start a fetch call
+  fetch_id = client.start_fetch("http://www.ruby-lang.org")
+
+  # Do something else and get the results of the previously started fetch call
+  result = client.get_result(fetch_id)
+
+  # Close the client
+  client.close
+
+  # In order to retrieve the fetched contends, our result provides three
+  # different keys
+  code = result['code']
+  head = result['headers']
+  body = result['body']
