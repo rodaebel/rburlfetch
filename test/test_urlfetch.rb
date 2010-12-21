@@ -53,6 +53,9 @@ class TestUrlfetchClient < Test::Unit::TestCase
     # Get the result
     result = client.get_result(fid)
 
+    # Close the client
+    client.close
+
     assert_equal(200, result["status_code"])
   end
 
