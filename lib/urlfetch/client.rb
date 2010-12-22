@@ -64,7 +64,7 @@ module Urlfetch
   # +s+:: A string.
   #
   # Returns:
-  # Integer or long.
+  # Integer.
   #
   def read_int4(s)
     int = Integer((s[0].ord << 24) +
