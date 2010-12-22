@@ -69,18 +69,19 @@ class TestUrlfetchClient < Test::Unit::TestCase
     client = Urlfetch::URLFetchClient.new(addr)
 
     # Start a single fetch call
-    fid = client.start_fetch("http://www.ruby-lang.org")
+    fid = client.start_fetch("http://www.elang.org")
 
     assert_equal(32, fid.length)
 
+    nowait = true
+
     begin
-      # Get the result
-      result = client.get_result(fid, nowait=true)
+      result = client.get_result(fid, nowait=nowait)
     rescue Urlfetch::DownloadError
-      # Retry, but now wait for the result
-      result = client.get_result(fid)
+      # Do something else
+      nowait = false
+      retry
     ensure
-      # Close the client
       client.close
     end
 

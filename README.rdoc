@@ -37,20 +37,27 @@ low-level API.
   # Specify the address of the the URL Fetch service
   addr = Urlfetch::Address.new(host='127.0.0.1', port=10190)
 
+Creating and using the client is straightforward.
+
   # Create a new client
   client = Urlfetch::URLFetchClient.new(addr)
 
   # Start a fetch call
   fetch_id = client.start_fetch("http://www.ruby-lang.org")
 
-  # Do something else and get the results of the previously started fetch call
+  # Get the result
   result = client.get_result(fetch_id)
 
-  # Close the client
-  client.close
+The next sample shows how retrieve results without waiting/blocking.
 
-  # In order to retrieve the fetched contends, our result provides three
-  # different keys
-  code = result['code']
-  head = result['headers']
-  body = result['body']
+  nowait = true
+
+  begin
+    result = client.get_result(fetch_id, nowait=nowait)
+  rescue Urlfetch::DownloadError
+    # Do something else
+    nowait=false
+    retry
+  ensure
+    client.close
+  end
