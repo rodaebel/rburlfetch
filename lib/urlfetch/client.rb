@@ -28,13 +28,14 @@ module Urlfetch
   # Returns:
   # Packed binary data.
   #
-  def self.pack(*args)
+  def pack(*args)
     data = String.new
     args.each do |a|
       data << a
     end
     return data
   end
+  module_function :pack
 
   # Creates a command from the given arguments.
   #
@@ -44,7 +45,7 @@ module Urlfetch
   # Returns:
   # Encoded command.
   #
-  def self.command(*args)
+  def command(*args)
     if args.length == 1
       return args[0]
     end
@@ -55,6 +56,7 @@ module Urlfetch
     command << args[-1]
     return command
   end
+  module_function :command
 
   # Convert first four bytes from a string to an unsigned 32-bit integer.
   #
@@ -64,13 +66,14 @@ module Urlfetch
   # Returns:
   # Integer or long.
   #
-  def self.read_int4(s)
+  def read_int4(s)
     int = Integer((s[0].ord << 24) +
                   (s[1].ord << 16) +
                   (s[2].ord << 8) +
                   (s[3].ord << 0))
     return int
   end
+  module_function :read_int4
 
   # Encodes headers.
   #
@@ -80,7 +83,7 @@ module Urlfetch
   # Returns:
   # Encoded headers.
   #
-  def self.encode_headers(headers)
+  def encode_headers(headers)
     if headers.length == 0 then
       return ""
     end
@@ -90,6 +93,7 @@ module Urlfetch
     end
     return h.join("\n")
   end
+  module_function :encode_headers
 
   # Decodes headers.
   #
@@ -99,11 +103,12 @@ module Urlfetch
   # Returns:
   # Hash with key-value pairs holding the HTTP headers.
   #
-  def self.decode_headers(string)
+  def decode_headers(string)
     headers = Hash.new
     string.split("\n").map { |h| h.split(": ") }.map { |k,v| headers[k]=v }
     return headers
   end
+  module_function :decode_headers
 
   # Instances of this class represent single clients for the URL Fetch service.
   class URLFetchClient
