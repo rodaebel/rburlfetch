@@ -48,7 +48,7 @@ Creating and using the client is straightforward.
   # Get the result
   result = client.get_result(fetch_id)
 
-The next sample shows how retrieve results without waiting/blocking.
+The next sample shows how to retrieve results without waiting/blocking.
 
   nowait = true
 
