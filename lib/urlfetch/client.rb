@@ -149,9 +149,7 @@ module Urlfetch
     # A fetch call id.
     #
     def start_fetch(url, payload="", method="get", headers={})
-      if @socket == nil then
-        open
-      end
+      open if @socket == nil
 
       method.downcase!
 
@@ -182,15 +180,10 @@ module Urlfetch
     #
     def get_result(fid, nowait=false)
 
-      if @socket == nil then
-        open
-      end
+      open if @socket == nil
 
-      if nowait then
-        @socket.write(Urlfetch.command("GET_RESULT_NOWAIT", fid))
-      else
-        @socket.write(Urlfetch.command("GET_RESULT", fid))
-      end
+      @socket.write(
+        Urlfetch.command(nowait ? "GET_RESULT_NOWAIT" : "GET_RESULT", fid))
 
       body = ""
 
