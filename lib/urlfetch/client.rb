@@ -46,9 +46,7 @@ module Urlfetch
   # Encoded command.
   #
   def command(*args)
-    if args.length == 1
-      return args[0]
-    end
+    return args[0] if args.length == 1
     command = String.new
     args.slice(0, args.length-1).each do |a|
       command << self.pack(a.length, a)
@@ -84,9 +82,7 @@ module Urlfetch
   # Encoded headers.
   #
   def encode_headers(headers)
-    if headers.length == 0 then
-      return ""
-    end
+    return "" if headers.length == 0
     h = Array.new
     headers.keys.sort.each do |k|
       h << k+': '+headers[k]
